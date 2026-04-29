@@ -155,8 +155,15 @@ export default function JobSearchDashboard() {
       };
 
       const tryPostResilient = async (path, url) => {
+        // In Vercel production there is no Vite dev proxy, so `/n8n/...` will 404 on the app domain.
+        // Fall back to the absolute n8n URL when that happens.
         try {
-          return await tryPost(path);
+          const res = await tryPost(path);
+          if (res.ok) return res;
+          if (res.status === 404 || res.status === 405) {
+            return await tryPost(url);
+          }
+          return res;
         } catch {
           return await tryPost(url);
         }
