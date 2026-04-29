@@ -2,9 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 // Proxied by Vite (see vite.config.js) to avoid CORS in local dev.
 const N8N_WEBHOOK_PROD_PATH = "/n8n/webhook/c57ec200-84e8-4f5c-9dbe-9a828f638dca";
-const N8N_WEBHOOK_TEST_PATH = "/n8n/webhook-test/c57ec200-84e8-4f5c-9dbe-9a828f638dca";
 const N8N_WEBHOOK_PROD_URL = "https://n8n-production-6463.up.railway.app/webhook/c57ec200-84e8-4f5c-9dbe-9a828f638dca";
-const N8N_WEBHOOK_TEST_URL = "https://n8n-production-6463.up.railway.app/webhook-test/c57ec200-84e8-4f5c-9dbe-9a828f638dca";
 
 // Supabase read access (publishable/anon key). Table values come from Supabase only.
 const SUPABASE_URL = "https://yxwamgzayylfvitvtevd.supabase.co";
@@ -20,7 +18,7 @@ function todayISODate() {
 
 function formatMaybe(text) {
   const t = typeof text === "string" ? text.trim() : "";
-  return t ? t : "—";
+  return t ? t : "--";
 }
 
 export default function JobSearchDashboard() {
@@ -32,11 +30,11 @@ export default function JobSearchDashboard() {
   const [posts, setPosts] = useState([]);
   const [postsLoading, setPostsLoading] = useState(false);
   const [postsError, setPostsError] = useState("");
+  const [postsHint, setPostsHint] = useState("");
   const [activePost, setActivePost] = useState(null);
   const [activeTab, setActiveTab] = useState("paste");
 
   const canSubmit = useMemo(() => rawPost.trim().length > 0 && !submitting, [rawPost, submitting]);
-  const isProdBuild = Boolean(import.meta?.env?.PROD);
 
   useEffect(() => {
     loadPosts();
@@ -46,6 +44,7 @@ export default function JobSearchDashboard() {
   async function loadPosts() {
     setPostsLoading(true);
     setPostsError("");
+    setPostsHint("");
     try {
       const url = new URL(`${SUPABASE_URL}/rest/v1/job_posts`);
       url.searchParams.set(
@@ -93,8 +92,7 @@ export default function JobSearchDashboard() {
 
       // Supabase can return 200 [] when RLS policies filter everything.
       if (rows.length === 0) {
-        // Don't mark as an "error" (HTTP succeeded); show a clear hint instead.
-        setPostsError("Supabase returned 0 rows. If your dashboard shows rows, add an RLS SELECT policy for anon on public.job_posts, then refresh.");
+        setPostsHint("Supabase returned 0 rows. If the dashboard shows rows, your RLS SELECT policy is likely filtering anon reads.");
       }
     } catch (e) {
       setPostsError(e instanceof Error ? e.message : "Failed to load posts.");
@@ -164,9 +162,6 @@ export default function JobSearchDashboard() {
         }
       };
 
-      // Submit behavior:
-      // - Production builds (Vercel): only use production webhook.
-      // - Local dev: fall back to webhook-test if you want to use "Listen for test event".
       let res = await tryPostResilient(N8N_WEBHOOK_PROD_PATH, N8N_WEBHOOK_PROD_URL);
       if (!res.ok) {
         const prodStatus = res.status;
@@ -176,30 +171,7 @@ export default function JobSearchDashboard() {
         if (prodStatus === 404 && prodMsg.includes("not registered")) {
           throw new Error("n8n production webhook is not registered. Activate the workflow in n8n to enable the /webhook/... endpoint, then submit again.");
         }
-
-        if (!isProdBuild) {
-          res = await tryPostResilient(N8N_WEBHOOK_TEST_PATH, N8N_WEBHOOK_TEST_URL);
-          if (!res.ok) {
-            const testStatus = res.status;
-            const { text: testText, json: testJson } = await readBody(res);
-            const testMsg = (testJson && typeof testJson.message === "string" ? testJson.message : testText).toLowerCase();
-
-            if (testStatus === 404 && testMsg.includes("not registered") && testMsg.includes("get request")) {
-              throw new Error("Your n8n webhook-test is registered for GET, not POST. In the Webhook node, set HTTP Method to POST, then click 'Listen for test event' and submit again.");
-            }
-            if (testStatus === 404) {
-              throw new Error("n8n webhook-test is not active. In n8n, click 'Listen for test event', then submit again.");
-            }
-
-            const details = [
-              `prod: ${prodStatus}${prodText ? ` ${prodText}` : ""}`,
-              `test: ${testStatus}${testText ? ` ${testText}` : ""}`,
-            ].join(" | ");
-            throw new Error(`n8n webhook failed. ${details}`.trim());
-          }
-        } else {
-          throw new Error(`n8n production webhook failed (${prodStatus}).`);
-        }
+        throw new Error(`n8n production webhook failed (${prodStatus}).`);
       }
 
       setSuccessId(jobSearchId);
@@ -410,6 +382,9 @@ export default function JobSearchDashboard() {
 
           {postsError ? (
             <div style={{ padding: 14, fontSize: 12, color: "#7A1F1F", background: "#FCEBEB", borderTop: "1px solid #F2CACA" }}>{postsError}</div>
+          ) : null}
+          {!postsError && postsHint ? (
+            <div style={{ padding: 14, fontSize: 12, color: "#6E6A63", background: "#FAFAF8", borderTop: "1px solid #EFEADF" }}>{postsHint}</div>
           ) : null}
           {!postsLoading && !postsError && posts.length === 0 ? (
             <div style={{ padding: 14, fontSize: 12, color: "#6E6A63", background: "#FAFAF8", borderTop: "1px solid #EFEADF" }}>
