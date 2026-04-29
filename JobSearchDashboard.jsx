@@ -36,6 +36,7 @@ export default function JobSearchDashboard() {
   const [activeTab, setActiveTab] = useState("paste");
 
   const canSubmit = useMemo(() => rawPost.trim().length > 0 && !submitting, [rawPost, submitting]);
+  const isProdBuild = Boolean(import.meta?.env?.PROD);
 
   useEffect(() => {
     loadPosts();
@@ -92,9 +93,8 @@ export default function JobSearchDashboard() {
 
       // Supabase can return 200 [] when RLS policies filter everything.
       if (rows.length === 0) {
-        setPostsError(
-          "Supabase returned 0 rows for the publishable key. This usually means RLS SELECT policies are filtering out rows for anon users. Allow SELECT on public.job_posts for anon (or add an appropriate policy), then refresh."
-        );
+        // Don't mark as an "error" (HTTP succeeded); show a clear hint instead.
+        setPostsError("Supabase returned 0 rows. If your dashboard shows rows, add an RLS SELECT policy for anon on public.job_posts, then refresh.");
       }
     } catch (e) {
       setPostsError(e instanceof Error ? e.message : "Failed to load posts.");
@@ -156,9 +156,6 @@ export default function JobSearchDashboard() {
         }
       };
 
-      // Resilient submit:
-      // 1) Try production webhook (always-on when workflow is active).
-      // 2) If that fails (often 404 if not active / wrong path), try webhook-test.
       const tryPostResilient = async (path, url) => {
         try {
           return await tryPost(path);
@@ -167,36 +164,41 @@ export default function JobSearchDashboard() {
         }
       };
 
+      // Submit behavior:
+      // - Production builds (Vercel): only use production webhook.
+      // - Local dev: fall back to webhook-test if you want to use "Listen for test event".
       let res = await tryPostResilient(N8N_WEBHOOK_PROD_PATH, N8N_WEBHOOK_PROD_URL);
       if (!res.ok) {
         const prodStatus = res.status;
         const { text: prodText, json: prodJson } = await readBody(res);
+        const prodMsg = (prodJson && typeof prodJson.message === "string" ? prodJson.message : prodText).toLowerCase();
 
-        res = await tryPostResilient(N8N_WEBHOOK_TEST_PATH, N8N_WEBHOOK_TEST_URL);
-        if (!res.ok) {
-          const testStatus = res.status;
-          const { text: testText, json: testJson } = await readBody(res);
+        if (prodStatus === 404 && prodMsg.includes("not registered")) {
+          throw new Error("n8n production webhook is not registered. Activate the workflow in n8n to enable the /webhook/... endpoint, then submit again.");
+        }
 
-          const prodMsg = (prodJson && typeof prodJson.message === "string" ? prodJson.message : prodText).toLowerCase();
-          const testMsg = (testJson && typeof testJson.message === "string" ? testJson.message : testText).toLowerCase();
+        if (!isProdBuild) {
+          res = await tryPostResilient(N8N_WEBHOOK_TEST_PATH, N8N_WEBHOOK_TEST_URL);
+          if (!res.ok) {
+            const testStatus = res.status;
+            const { text: testText, json: testJson } = await readBody(res);
+            const testMsg = (testJson && typeof testJson.message === "string" ? testJson.message : testText).toLowerCase();
 
-          if (prodStatus === 404 && prodMsg.includes("not registered")) {
-            throw new Error("n8n production webhook is not registered. Activate the workflow in n8n to enable the /webhook/... endpoint, then submit again.");
+            if (testStatus === 404 && testMsg.includes("not registered") && testMsg.includes("get request")) {
+              throw new Error("Your n8n webhook-test is registered for GET, not POST. In the Webhook node, set HTTP Method to POST, then click 'Listen for test event' and submit again.");
+            }
+            if (testStatus === 404) {
+              throw new Error("n8n webhook-test is not active. In n8n, click 'Listen for test event', then submit again.");
+            }
+
+            const details = [
+              `prod: ${prodStatus}${prodText ? ` ${prodText}` : ""}`,
+              `test: ${testStatus}${testText ? ` ${testText}` : ""}`,
+            ].join(" | ");
+            throw new Error(`n8n webhook failed. ${details}`.trim());
           }
-
-          if (testStatus === 404 && testMsg.includes("not registered") && testMsg.includes("get request")) {
-            throw new Error("Your n8n webhook-test is registered for GET, not POST. In the Webhook node, set HTTP Method to POST (recommended for long LinkedIn posts), then click 'Listen for test event' and submit again.");
-          }
-
-          if (testStatus === 404) {
-            throw new Error("n8n webhook-test is not active. In n8n, click 'Listen for test event' (and ensure the Webhook node HTTP Method is POST), then submit again.");
-          }
-
-          const details = [
-            `prod: ${prodStatus}${prodText ? ` ${prodText}` : ""}`,
-            `test: ${testStatus}${testText ? ` ${testText}` : ""}`,
-          ].join(" | ");
-          throw new Error(`n8n webhook failed. ${details}`.trim());
+        } else {
+          throw new Error(`n8n production webhook failed (${prodStatus}).`);
         }
       }
 
