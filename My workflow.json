@@ -1,0 +1,2699 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "=1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Job Search ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1104,
+        -96
+      ],
+      "id": "c2e0b97a-ab14-42ff-983d-20c95986f1c3",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G4k6rNDAScBOH5kh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "claude-haiku-4-5-20251001",
+          "mode": "list",
+          "cachedResultName": "claude-haiku-4-5-20251001"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a strict job fit analysis engine for a specific candidate.\n\nCANDIDATE PROFILE:\n- Name: Ayush Arora\n- Experience: 6 years at PwC and KPMG\n- Current Role: Assistant Manager - Risk Advisory, PwC India\n- Location: Bengaluru (open to Mumbai, Dubai, Abu Dhabi, Remote)\n- Minimum Salary: INR 20 LPA fixed (India) | AED 18,000/month (Gulf)\n- Certifications: CISSP 2026, Six Sigma Black Belt\n- Key Achievements:\n  * Reconciliation platform: 90 days to 3 days, 51 to 3 people\n  * INR 170 Mn+ revenue exposure identified\n  * Counterfeit seller detection: complaints down 24%\n  * IPO readiness controls for consumer tech client\n\nCANDIDATE SKILLS:\nOperations, Process Redesign, Workflow Automation, Vendor Management,\nReconciliation Systems, Ops Analytics, Continuous Monitoring, ITGC,\nITAC, SOX, ICoFR, Internal Audit, IT Risk, Access Management,\nInformation Security, AI Governance, Stakeholder Management,\nSQL, Python, Power BI, Excel, Tableau, n8n, Six Sigma, SOP Creation\n\nPREFERRED ROLES (in order):\n1. Operations Manager\n2. Business Transformation Manager\n3. Process Improvement Manager\n4. Finance Transformation Manager\n5. Internal Controls Manager\n6. Supply Chain Operations Manager\n7. Business Excellence Manager\n8. Special Projects Manager\n9. IT Audit Manager (Gulf only)\n10. Risk Advisory Manager (Gulf only)\n\nSTRICT DISQUALIFIER RULES - set Disqualified true if ANY apply:\n- Role requires CA qualification explicitly\n- Role requires 10+ years minimum experience\n- Role is recruiter, HR generalist, sales, marketing, or BD\n- Location is USA, Europe, Malaysia, Singapore, Australia unless 100% remote\n- Salary explicitly below INR 15 LPA or AED 14,000/month\n- Role is in voice chat, gaming, live streaming, or adult industry\n- Company is a recruitment agency hiring internal recruiters\n- Role requires deep domain expertise candidate has zero exposure to\n- Role is purely junior level requiring only 1-2 years experience\n\nRESUME TYPE RULES:\n- Gulf + Big 4 or risk roles → \"Big 4 Resume\"\n- India startup ops or transformation → \"Version A - Founder\"\n- India MNC or large corporate portal → \"Version B - ATS\"\n- Fintech or payments reconciliation → \"Version A - Founder\"\n- Big 4 experience explicitly valued → \"Big 4 Resume\"\n\nFIT SCORE SCALE 0 to 5:\n0 = Disqualified or completely irrelevant\n1 = Wrong role, wrong location, or major gap\n2 = Partial match but significant issues\n3 = Decent fit, proceed with caution\n4 = Strong fit, apply this week\n5 = Perfect fit, apply today\n\nPROCEED RULE:\n- Fit Score 3 or above AND Disqualified false → Proceed true\n- Fit Score below 3 OR Disqualified true → Proceed false\n\nAnalyse this job post for candidate fit. Return ONLY JSON.\n\nRAW POST:\n{{ $json[\"Raw Post\"] }}\n\nEXTRACTED DETAILS:\nPerson Name: {{ $('Get row(s) in sheet1').item.json['Person Name'] }}\nPerson Title: {{ $('Get row(s) in sheet1').item.json['Person Title'] }}\nHiring Line: {{ $('Get row(s) in sheet1').item.json['Hiring Line'] }}\nJob Role: {{ $('Get row(s) in sheet1').item.json['Job Role'] }}\nLocation: {{ $('Get row(s) in sheet1').item.json.Location }}\nSalary: {{ $('Get row(s) in sheet1').item.json.Salary }}\nExperience Required: {{ $('Get row(s) in sheet1').item.json.Expierence }}\nResponsibilities: {{ $('Get row(s) in sheet1').item.json.Responsibilities }}\nSkills Required: {{ $('Get row(s) in sheet1').item.json['Skills Required'] }}\nHashtags: {{ $('Get row(s) in sheet1').item.json.Hashtags }}\nDomain: {{ $('Get row(s) in sheet1').item.json.Domain }}\n\nReturn this exact JSON structure:\n\n{\n  \"company\": \"\",\n  \"role\": \"\",\n  \"location\": \"\",\n  \"salary_mentioned\": \"\",\n  \"contact_name\": \"\",\n  \"contact_email\": \"\",\n  \"apply_link\": \"\",\n  \"Matching Skills\": [],\n  \"Missing Skills\": [],\n  \"Experience Gap\": \"\",\n  \"Role Alignment\": \"\",\n  \"Domain Fit\": \"\",\n  \"Context Fit\": \"\",\n  \"Skill Match Score\": 0,\n  \"Experience Match Score\": 0,\n  \"Role Match Score\": 0,\n  \"Location Match\": \"\",\n  \"Salary Match\": \"\",\n  \"Stretch Level\": \"\",\n  \"Fit Score\": 0,\n  \"Fit Stars\": \"\",\n  \"Proceed\": false,\n  \"Disqualified\": false,\n  \"Disqualify Reason\": \"\",\n  \"One Line Reason\": \"\",\n  \"Resume Type\": \"\",\n  \"Outreach Channel\": \"\",\n  \"Email Subject\": \"\",\n  \"Email Body\": \"\",\n  \"LinkedIn DM\": \"\",\n  \"Priority Rank\": 0,\n  \"Confidence Score\": 0,\n  \"Hiring Confidence\": \"\"\n}\n\nReturn ONLY valid JSON. No explanation. No preamble. No markdown backticks.\n\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.anthropic",
+      "typeVersion": 1,
+      "position": [
+        64,
+        -688
+      ],
+      "id": "196457d7-05b3-4e2c-a7f7-0e03681b5d54",
+      "name": "Message a model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "hArDUwcu2gRA1QSm",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -896,
+        -96
+      ],
+      "id": "d809094b-f1df-476e-a9f4-58c600f9c7bc",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -80
+      ],
+      "id": "1e2500ef-ccda-423d-880e-66c5b1dcdc4d",
+      "placeholder": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 1: Get raw AI response\nconst raw = $json.output?.[0]?.content?.[0]?.text || \"{}\";\n\n// Step 2: Extract JSON safely\nlet data = {};\ntry {\n  const match = raw.match(/\\{[\\s\\S]*\\}/);\n  data = match ? JSON.parse(match[0]) : {};\n} catch (e) {\n  data = {};\n}\n\n// ---------- CLEANUPS ----------\n\n// Clean Experience\nlet experience = data[\"Experience\"] || \"\";\nif (experience) {\n  const match = experience.match(/\\d+\\+?\\s*(years?|yrs?)/i);\n  experience = match ? match[0] : \"\";\n}\n\n// Trim long text fields\nconst cleanText = (text, limit = 400) => {\n  if (!text) return \"\";\n  return text.replace(/\\s+/g, \" \").trim().slice(0, limit);\n};\n\n// Normalize hashtags\nconst hashtags = data[\"Hashtags\"] || \"\";\nconst cleanHashtags = hashtags\n  .split(\",\")\n  .map(h => h.trim())\n  .filter(h => h.startsWith(\"#\"))\n  .join(\", \");\n\n// ---------- OUTPUT ----------\n\nreturn [{\n  json: {\n    // ---- BASE ----\n    \"Job Search ID\": $json[\"Job Search ID\"] ?? \"\",\n    \"Raw Post\": $json[\"Raw Post\"] ?? \"\",\n    \"Post Link\": $json[\"Post Link\"] ?? \"\",\n    \"Person Name\": $json[\"Person Name\"] ?? \"\",\n    \"Person Title\": $json[\"Person Title\"] ?? \"\",\n    \"Date of Search\": $json[\"Date of Search\"] ?? new Date().toISOString().slice(0,10),\n\n    // ---- JOB ----\n    \"Hiring Line\": data[\"Hiring Line\"] ?? \"\",\n    \"Job Role\": data[\"Job Role\"] ?? \"\",\n    \"Company\": data[\"Company\"] ?? \"\",\n    \"Location\": data[\"Location\"] ?? \"\",\n    \"Salary\": data[\"Salary\"] ?? \"\",\n    \"Experience\": experience,\n\n    // ---- CONTENT ----\n    \"Responsibilities\": cleanText(data[\"Responsibilities\"], 500),\n    \"Skills Required\": cleanText(data[\"Skills Required\"], 300),\n\n    // ---- CONTACT ----\n    \"Apply Link\": data[\"Apply Link\"] || $json[\"Apply Link\"] || \"\",\n    \"Apply Email\": data[\"Apply Email\"] || $json[\"Email in Post\"] || \"\",\n\n    // ---- META ----\n    \"Hashtags\": cleanHashtags,\n    \"Domain\": data[\"Domain\"] ?? \"\",\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        -288
+      ],
+      "id": "525d7e17-fd3a-4916-aebb-a48e582be854",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo",
+          "mode": "list",
+          "cachedResultName": "GPT-3.5-TURBO"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are a data cleaning and normalization assistant.\n\nYou will receive:\n1. A LinkedIn job post (Raw Post)\n2. Pre-extracted structured fields\n\nYour job:\n- Clean, standardize, and complete the data\n- Fill missing fields ONLY if clearly inferable from the job section\n- DO NOT hallucinate\n- DO NOT overwrite correct existing values\n- Keep output consistent and structured\n\n------------------------\n\nINPUT:\n\nRaw Post:\n{{ $json[\"Raw Post\"] }}\n\nPre-extracted data:\n- Person Name: {{ $json[\"Person Name\"] }}\n- Person Title: {{ $json[\"Person Title\"] }}\n- Apply Link: {{ $json[\"Apply Link\"] }}\n- Apply Email: {{ $json[\"Email in Post\"] }}\n- Role: {{ $json[\"Role\"] }}\n- Salary: {{ $json[\"Salary Mentioned\"] }}\n\n------------------------\n\nIMPORTANT LOGIC:\n\n1. Identify the JOB SECTION:\n   - Starts from: \"Hiring\", \"We’re Hiring\", \"🚀\", \"Job Alert\"\n   - Ignore everything BEFORE this (profile header)\n\n2. NEVER extract job role from profile section\n\n3. If data is not clearly present → return \"\"\n\n------------------------\n\nOUTPUT JSON (STRICT):\n\n{\n  \"Hiring Line\": \"\",\n  \"Job Role\": \"\",\n  \"Company\": \"\",\n  \"Location\": \"\",\n  \"Salary\": \"\",\n  \"Experience\": \"\",\n  \"Responsibilities\": \"\",\n  \"Skills Required\": \"\",\n  \"Apply Link\": \"\",\n  \"Apply Email\": \"\",\n  \"Hashtags\": \"\",\n  \"Domain\": \"\"\n}\n\n------------------------\n\nFIELD RULES:\n\n- Hiring Line:\n  → Full hiring sentence (e.g., \"🚀Hiring: Founder's Team | Bengaluru\")\n\n- Job Role:\n  → Extract ONLY from hiring line or job description\n  → Remove emojis, prefixes, noise\n  → Example: \"Founder's Team\", \"Vice President – Strategy & Transformation\"\n\n- Company:\n  → Extract if explicitly mentioned OR infer from email domain\n  → Else return \"\"\n\n- Location:\n  → Extract city or \"Remote\"\n  → Normalize (e.g., \"Bangalore\" → \"Bengaluru\")\n\n- Salary:\n  → Extract exact format (₹, INR, LPA etc.)\n  → Example: \"₹30–40 LPA\"\n\n- Experience:\n  → Extract like \"5+ years\", \"14+ years\"\n\n- Responsibilities:\n  → Extract section under:\n     \"What You’ll Actually Do\" OR \"Key Responsibilities\"\n  → Keep concise (max ~300–500 chars)\n\n- Skills Required:\n  → Extract from:\n     \"Who This Is Perfect For\" OR \"What We’re Looking For\"\n  → Clean bullets → comma-separated\n\n- Apply Link:\n  → Extract URL if present\n  → Prefer given pre-extracted value if valid\n\n- Apply Email:\n  → Extract email if present\n  → Prefer given pre-extracted value if valid\n\n- Hashtags:\n  → Extract all hashtags\n  → Format: \"#Hiring, #Strategy, #B2BSaaS\"\n\n- Domain:\n  → Choose ONE:\n     \"Operations\", \"SOX / IT Audit\", \"Finance\", \"Strategy\", \"Other\"\n\n------------------------\n\nSTRICT RULES:\n\n- Ignore profile section completely\n- Do NOT confuse poster title with job role\n- Do NOT invent company names\n- Do NOT infer missing salary or experience\n- If unsure → return \"\"\n\n------------------------\n\nRETURN ONLY JSON"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -64,
+        -288
+      ],
+      "id": "9d029dcb-4253-4568-a6de-1a0c6f8e84b0",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "AYt92KHdFmj02N8j",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw",
+          "mode": "list",
+          "cachedResultName": "Job Search n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Job Searches",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Job Search ID": "={{ $('Loop Over Items1').item.json[\"Job Search ID\"] }}",
+            "Location": "={{ $json.Location }}",
+            "Skills Required": "={{ $json[\"Skills Required\"] }}",
+            "Date of Search": "=const dateOfSearch = new Date().toISOString().slice(0,10);",
+            "Hiring Line": "={{ $json[\"Hiring Line\"] }}",
+            "Job Role": "={{ $json[\"Job Role\"] }}",
+            "Salary": "={{ $json.Salary }}",
+            "Expierence": "={{ $json.Experience }}",
+            "Responsibilities": "={{ $json.Responsibilities }}",
+            "Hashtags": "={{ $json.Hashtags }}",
+            "Domain": "={{ $json.Domain }}",
+            "Job ID Processed": "Yes",
+            "Moved to Matches": "No"
+          },
+          "matchingColumns": [
+            "Job Search ID"
+          ],
+          "schema": [
+            {
+              "id": "Raw Post",
+              "displayName": "Raw Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Post Link",
+              "displayName": "Post Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Job Search ID",
+              "displayName": "Job Search ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Person Name",
+              "displayName": "Person Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Person Title",
+              "displayName": "Person Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date of Search",
+              "displayName": "Date of Search",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hiring Line",
+              "displayName": "Hiring Line",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Job Role",
+              "displayName": "Job Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Salary",
+              "displayName": "Salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Expierence",
+              "displayName": "Expierence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Responsibilities",
+              "displayName": "Responsibilities",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Skills Required",
+              "displayName": "Skills Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Apply Link",
+              "displayName": "Apply Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Apply Email",
+              "displayName": "Apply Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hashtags",
+              "displayName": "Hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Domain",
+              "displayName": "Domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Job ID Processed",
+              "displayName": "Job ID Processed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Moved to Matches",
+              "displayName": "Moved to Matches",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        560,
+        -288
+      ],
+      "id": "37dccf0c-b3a0-436a-b8b1-f3db8b0f3eda",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G4k6rNDAScBOH5kh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\n\n// Format: YYYYMMDDHHMMSS\nconst timestamp = now.toISOString().replace(/[-:TZ.]/g, \"\").slice(0,14);\n\n// Random 4 digit\nconst random = Math.floor(1000 + Math.random() * 9000);\n\n// Final ID\nconst jobId = `JS-${timestamp}-${random}`;\n\nreturn [{\n  json: {\n    \"Job Search ID\": jobId,\n    \"Raw Post\": $json[\"Raw Post\"] || \"\",\n    \"Post Link\": $json[\"Post Link\"] || \"\"\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -624,
+        -80
+      ],
+      "id": "26c6aca7-f53e-48e2-994e-3f035c4f790d",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw",
+          "mode": "list",
+          "cachedResultName": "Job Search n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Job Searches",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Post Link": "={{ $json['Post Link'] }}",
+            "Job Search ID": "={{ $json['Job Search ID'] }}",
+            "Job ID Processed": "Pending"
+          },
+          "matchingColumns": [
+            "Post Link"
+          ],
+          "schema": [
+            {
+              "id": "Raw Post",
+              "displayName": "Raw Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Post Link",
+              "displayName": "Post Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Job Search ID",
+              "displayName": "Job Search ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Person Name",
+              "displayName": "Person Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Person Title",
+              "displayName": "Person Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email in Post",
+              "displayName": "Email in Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Apply Link",
+              "displayName": "Apply Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date Added",
+              "displayName": "Date Added",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Salary Mentioned",
+              "displayName": "Salary Mentioned",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "CA Required",
+              "displayName": "CA Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Years Required",
+              "displayName": "Years Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Domain",
+              "displayName": "Domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fit Score",
+              "displayName": "Fit Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fit Stars",
+              "displayName": "Fit Stars",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Disqualified",
+              "displayName": "Disqualified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Disqualify Reason",
+              "displayName": "Disqualify Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Proceed",
+              "displayName": "Proceed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "One Line Reason",
+              "displayName": "One Line Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Subject",
+              "displayName": "Email Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Body",
+              "displayName": "Email Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "LinkedIn DM",
+              "displayName": "LinkedIn DM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Follow Up Message",
+              "displayName": "Follow Up Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hashtags Detected",
+              "displayName": "Hashtags Detected",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Skills Required",
+              "displayName": "Skills Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Ayush Matching Skills",
+              "displayName": "Ayush Matching Skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Ayush Missing Skills",
+              "displayName": "Ayush Missing Skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Job ID Processed",
+              "displayName": "Job ID Processed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Sent to Recruiter",
+              "displayName": "Email Sent to Recruiter",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -320,
+        -80
+      ],
+      "id": "150ff39c-6d66-4532-834f-c01f0648fe43",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G4k6rNDAScBOH5kh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -512,
+        -304
+      ],
+      "id": "afe74831-0ed0-42b1-9e50-6442324737d4",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        896,
+        -288
+      ],
+      "id": "87be5753-6b5c-4811-b890-807dbb3ea965",
+      "placeholder": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1328,
+        -96
+      ],
+      "id": "28df7c6b-f236-478e-afa6-97b90b6e5417",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json[\"Raw Post\"] || \"\";\n\n// ---------------- CLEAN LINES ----------------\nconst lines = text\n  .split(\"\\n\")\n  .map(l => l.trim())\n  .filter(l => l.length > 0);\n\n// ---------------- EMAIL ----------------\nconst emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-z]{2,}/);\nconst email = emailMatch ? emailMatch[0] : \"\";\n\n// ---------------- APPLY LINK ----------------\nconst linkMatch = text.match(/https?:\\/\\/[^\\s]+/);\nconst applyLink = linkMatch ? linkMatch[0] : \"\";\n\n// ---------------- NAME ----------------\nlet name = \"\";\n\nconst nameMatch = text.match(/View\\s+([A-Za-z\\s\\.]+)’s profile/i);\n\nif (nameMatch) {\n  name = nameMatch[1].trim();\n} else {\n  // fallback: strict human name pattern\n  name = lines.find(l =>\n    /^[A-Z][a-z]+(\\s[A-Z][a-z]+)+$/.test(l)\n  ) || \"\";\n}\n\n// ---------------- TITLE ----------------\nlet title = \"\";\n\nif (name) {\n  const noisePatterns = [\n    /^•/,           // • 2nd\n    /^follow$/i,\n    /^\\d+h/,        // 3h, 11h\n    /^edited/i,\n    /^connect$/i\n  ];\n\n  const nameIndex = lines.findIndex(l => l === name);\n\n  for (let i = nameIndex + 1; i < nameIndex + 6; i++) {\n    if (!lines[i]) continue;\n\n    const isNoise = noisePatterns.some(p => p.test(lines[i]));\n\n    if (!isNoise) {\n      title = lines[i];\n      break;\n    }\n  }\n}\n\n// ---------------- ROLE ----------------\nlet role = \"\";\n\nconst roleMatch = text.match(/Hiring[:\\-]?\\s*(.*)/i);\nif (roleMatch) {\n  role = roleMatch[1].split(\"|\")[0].trim();\n}\n\n// ---------------- LOCATION ----------------\nlet location = \"\";\nif (/bengaluru|bangalore/i.test(text)) location = \"Bengaluru\";\n\n// ---------------- SALARY ----------------\nconst salaryMatch = text.match(/₹\\s?\\d+[–-]?\\d*\\s?(LPA|L|lakhs?)/i);\nconst salary = salaryMatch ? salaryMatch[0] : \"\";\n\n// ---------------- OUTPUT ----------------\nreturn [{\n  json: {\n    ...$json,\n    \"Person Name\": name,\n    \"Person Title\": title,\n    \"Email in Post\": email,\n    \"Apply Link\": applyLink,\n    \"Role\": role,\n    \"Location\": location,\n    \"Salary Mentioned\": salary\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        -288
+      ],
+      "id": "ff035e8d-2377-406f-ad43-1a3d50d8f29d",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw",
+          "mode": "list",
+          "cachedResultName": "Job Search n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Job Searches",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Job Search ID": "={{ $json[\"Job Search ID\"] }}",
+            "Person Name": "={{ $json[\"Person Name\"] }}",
+            "Person Title": "={{ $json[\"Person Title\"] }}",
+            "Apply Link": "={{ $json[\"Apply Link\"] }}",
+            "Location": "={{ $json.Location }}",
+            "Apply Email": "={{ $json[\"Email in Post\"] }}"
+          },
+          "matchingColumns": [
+            "Job Search ID"
+          ],
+          "schema": [
+            {
+              "id": "Raw Post",
+              "displayName": "Raw Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Post Link",
+              "displayName": "Post Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Job Search ID",
+              "displayName": "Job Search ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Person Name",
+              "displayName": "Person Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Person Title",
+              "displayName": "Person Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date of Search",
+              "displayName": "Date of Search",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hiring Line",
+              "displayName": "Hiring Line",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Job Role",
+              "displayName": "Job Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Salary",
+              "displayName": "Salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Expierence",
+              "displayName": "Expierence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Responsibilities",
+              "displayName": "Responsibilities",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Skills Required",
+              "displayName": "Skills Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Apply Link",
+              "displayName": "Apply Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Apply Email",
+              "displayName": "Apply Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hashtags",
+              "displayName": "Hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -288,
+        -464
+      ],
+      "id": "d5e3fd7b-77d0-4d91-b81e-d3a8da5a1f63",
+      "name": "Update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G4k6rNDAScBOH5kh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4ff58a13-26dd-44f6-9285-9fcf642704a9",
+              "leftValue": "={{ $json[\"Job ID Processed\"] }}",
+              "rightValue": "Pending",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -736,
+        -288
+      ],
+      "id": "41700c20-82ba-4b7c-bf4f-8a4bdf77f585",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw",
+          "mode": "list",
+          "cachedResultName": "Job Search n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 261087915,
+          "mode": "list",
+          "cachedResultName": "Matches",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit#gid=261087915"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Raw Post": "={{ $json[\"Raw Post\"] }}",
+            "Post Link": "={{ $json[\"Post Link\"] }}",
+            "Job Search ID": "={{ $json[\"Job Search ID\"] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Raw Post",
+              "displayName": "Raw Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Post Link",
+              "displayName": "Post Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Search ID",
+              "displayName": "Job Search ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Matching Skills",
+              "displayName": "Matching Skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Missing Skills",
+              "displayName": "Missing Skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Experience Gap",
+              "displayName": "Experience Gap",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Role Alignment",
+              "displayName": "Role Alignment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Domain Fit",
+              "displayName": "Domain Fit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Context Fit",
+              "displayName": "Context Fit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fit Score",
+              "displayName": "Fit Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fit Stars",
+              "displayName": "Fit Stars",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Proceed",
+              "displayName": "Proceed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Disqualified",
+              "displayName": "Disqualified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Disqualify Reason",
+              "displayName": "Disqualify Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "One Line Reason",
+              "displayName": "One Line Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Resume Type",
+              "displayName": "Resume Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Outreach Channel",
+              "displayName": "Outreach Channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Priority Rank",
+              "displayName": "Priority Rank",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Confidence Score",
+              "displayName": "Confidence Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Skill Match Score",
+              "displayName": "Skill Match Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Experience Match Score",
+              "displayName": "Experience Match Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Role Match Score",
+              "displayName": "Role Match Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Location Match",
+              "displayName": "Location Match",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Salary Match",
+              "displayName": "Salary Match",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Stretch Level",
+              "displayName": "Stretch Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hiring Confidence",
+              "displayName": "Hiring Confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "salary_mentioned",
+              "displayName": "salary_mentioned",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "contact_name",
+              "displayName": "contact_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "contact_email",
+              "displayName": "contact_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "apply_link",
+              "displayName": "apply_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Subject",
+              "displayName": "Email Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Body",
+              "displayName": "Email Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "LinkedIn DM",
+              "displayName": "LinkedIn DM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -416,
+        -704
+      ],
+      "id": "10e4b0d4-b5f2-4f08-82af-e500e8205020",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G4k6rNDAScBOH5kh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw",
+          "mode": "list",
+          "cachedResultName": "Job Search n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Job Searches",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Job ID Processed",
+              "lookupValue": "Yes"
+            },
+            {
+              "lookupColumn": "Moved to Matches",
+              "lookupValue": "No"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -656,
+        -704
+      ],
+      "id": "6f2c205c-57ec-4057-8d61-012f96d7f84c",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G4k6rNDAScBOH5kh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -208,
+        -704
+      ],
+      "id": "24616e6e-5986-40fe-927c-7ab5c881992f",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 1: Get raw text\nconst raw = $json.content?.[0]?.text || \"\";\n\n// Step 2: Try extracting JSON from ```json block\nlet jsonText = \"\";\n\nconst codeBlockMatch = raw.match(/```json\\s*([\\s\\S]*?)\\s*```/);\n\nif (codeBlockMatch) {\n  jsonText = codeBlockMatch[1];\n} else {\n  // fallback: extract any JSON object\n  const fallbackMatch = raw.match(/\\{[\\s\\S]*\\}/);\n  jsonText = fallbackMatch ? fallbackMatch[0] : \"{}\";\n}\n\n// Step 3: Parse safely\nlet data = {};\ntry {\n  data = JSON.parse(jsonText);\n} catch (e) {\n  data = {};\n}\n\n// Step 4: return\nreturn [{ json: data }];;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        -688
+      ],
+      "id": "7e5df9ad-52d3-4d5d-9ec1-4a6fcf4e8aca",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw",
+          "mode": "list",
+          "cachedResultName": "Job Search n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 261087915,
+          "mode": "list",
+          "cachedResultName": "Matches",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit#gid=261087915"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Job Search ID": "={{ $('Append row in sheet').item.json[\"Job Search ID\"] }}",
+            "Matching Skills": "={{ $json[\"Matching Skills\"] }}",
+            "Missing Skills": "={{ $json[\"Missing Skills\"] }}",
+            "Experience Gap": "={{ $json[\"Experience Gap\"] }}",
+            "Role Alignment": "={{ $json[\"Role Alignment\"] }}",
+            "Domain Fit": "={{ $json[\"Domain Fit\"] }}",
+            "Context Fit": "={{ $json[\"Context Fit\"] }}",
+            "Fit Score": "={{ $json[\"Fit Score\"] }}",
+            "Fit Stars": "={{ $json[\"Fit Stars\"] }}",
+            "Proceed": "={{ $json.Proceed }}",
+            "Disqualified": "={{ $json.Disqualified }}",
+            "Disqualify Reason": "={{ $json[\"Disqualify Reason\"] }}",
+            "One Line Reason": "={{ $json[\"One Line Reason\"] }}",
+            "Resume Type": "={{ $json[\"Resume Type\"] }}",
+            "Outreach Channel": "={{ $json[\"Outreach Channel\"] }}",
+            "Priority Rank": "={{ $json[\"Priority Rank\"] }}",
+            "Confidence Score": "={{ $json[\"Confidence Score\"] }}",
+            "Skill Match Score": "={{ $json[\"Skill Match Score\"] }}",
+            "Experience Match Score": "={{ $json[\"Experience Match Score\"] }}",
+            "Role Match Score": "={{ $json[\"Role Match Score\"] }}",
+            "Location Match": "={{ $json[\"Location Match\"] }}",
+            "Salary Match": "={{ $json[\"Salary Match\"] }}",
+            "Stretch Level": "={{ $json[\"Stretch Level\"] }}",
+            "Hiring Confidence": "={{ $json[\"Hiring Confidence\"] }}",
+            "company": "={{ $json.company }}",
+            "role": "={{ $json.role }}",
+            "location": "={{ $json.location }}",
+            "salary_mentioned": "={{ $json.salary_mentioned }}",
+            "contact_name": "={{ $json.contact_name }}",
+            "contact_email": "={{ $json.contact_email }}",
+            "apply_link": "={{ $json.apply_link }}",
+            "Email Subject": "={{ $json[\"Email Subject\"] }}",
+            "Email Body": "={{ $json[\"Email Body\"] }}",
+            "LinkedIn DM": "={{ $json[\"LinkedIn DM\"] }}"
+          },
+          "matchingColumns": [
+            "Job Search ID"
+          ],
+          "schema": [
+            {
+              "id": "Raw Post",
+              "displayName": "Raw Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Post Link",
+              "displayName": "Post Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Job Search ID",
+              "displayName": "Job Search ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Matching Skills",
+              "displayName": "Matching Skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Missing Skills",
+              "displayName": "Missing Skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Experience Gap",
+              "displayName": "Experience Gap",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role Alignment",
+              "displayName": "Role Alignment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Domain Fit",
+              "displayName": "Domain Fit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Context Fit",
+              "displayName": "Context Fit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fit Score",
+              "displayName": "Fit Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fit Stars",
+              "displayName": "Fit Stars",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Proceed",
+              "displayName": "Proceed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Disqualified",
+              "displayName": "Disqualified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Disqualify Reason",
+              "displayName": "Disqualify Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "One Line Reason",
+              "displayName": "One Line Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resume Type",
+              "displayName": "Resume Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Outreach Channel",
+              "displayName": "Outreach Channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Strategy",
+              "displayName": "Email Strategy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Priority Rank",
+              "displayName": "Priority Rank",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Confidence Score",
+              "displayName": "Confidence Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Skill Match Score",
+              "displayName": "Skill Match Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Experience Match Score",
+              "displayName": "Experience Match Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role Match Score",
+              "displayName": "Role Match Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location Match",
+              "displayName": "Location Match",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Salary Match",
+              "displayName": "Salary Match",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stretch Level",
+              "displayName": "Stretch Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hiring Confidence",
+              "displayName": "Hiring Confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "salary_mentioned",
+              "displayName": "salary_mentioned",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "contact_name",
+              "displayName": "contact_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "contact_email",
+              "displayName": "contact_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "apply_link",
+              "displayName": "apply_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Subject",
+              "displayName": "Email Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Body",
+              "displayName": "Email Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LinkedIn DM",
+              "displayName": "LinkedIn DM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        656,
+        -688
+      ],
+      "id": "a5a5458f-363a-400a-bf3e-690049cfc95a",
+      "name": "Update row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G4k6rNDAScBOH5kh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me2",
+      "typeVersion": 1,
+      "position": [
+        912,
+        -688
+      ],
+      "id": "8b6b6580-c9c1-4818-9d56-6b1c0056a909",
+      "placeholder": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw",
+          "mode": "list",
+          "cachedResultName": "Job Search n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Job Searches",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Job ID Processed",
+              "lookupValue": "Yes"
+            },
+            {
+              "lookupColumn": "Moved to Matches",
+              "lookupValue": "No"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -128,
+        -848
+      ],
+      "id": "fcfc2b61-6842-490a-98d0-41f6a0fbe8b0",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G4k6rNDAScBOH5kh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw",
+          "mode": "list",
+          "cachedResultName": "Job Search n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Job Searches",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Job Search ID": "={{ $json[\"Job Search ID\"] }}",
+            "Moved to Matches": "Yes"
+          },
+          "matchingColumns": [
+            "Job Search ID"
+          ],
+          "schema": [
+            {
+              "id": "Raw Post",
+              "displayName": "Raw Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Post Link",
+              "displayName": "Post Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Job Search ID",
+              "displayName": "Job Search ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Person Name",
+              "displayName": "Person Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Person Title",
+              "displayName": "Person Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date of Search",
+              "displayName": "Date of Search",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hiring Line",
+              "displayName": "Hiring Line",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Job Role",
+              "displayName": "Job Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Salary",
+              "displayName": "Salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Expierence",
+              "displayName": "Expierence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Responsibilities",
+              "displayName": "Responsibilities",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Skills Required",
+              "displayName": "Skills Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Apply Link",
+              "displayName": "Apply Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Apply Email",
+              "displayName": "Apply Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hashtags",
+              "displayName": "Hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Domain",
+              "displayName": "Domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Job ID Processed",
+              "displayName": "Job ID Processed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Moved to Matches",
+              "displayName": "Moved to Matches",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        80,
+        -848
+      ],
+      "id": "0d14dcfa-cce4-41ea-a58c-1f9f339b23d8",
+      "name": "Update row in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G4k6rNDAScBOH5kh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1152,
+        -288
+      ],
+      "id": "fa30b4dd-50b7-4d3c-87bc-b25c44a35e96",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "=1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UKvfGRNYpVh3ZlwwQJEcMH940Q3eFgrrQhhZA97aSWw/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -976,
+        -288
+      ],
+      "id": "149e2709-3546-476a-abd9-4ed7edf6e04e",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G4k6rNDAScBOH5kh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -832,
+        -704
+      ],
+      "id": "b0ece9d0-3d46-4a46-ad53-c35acc244ae2",
+      "name": "Schedule Trigger2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet2": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Replace Me2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "698e8d86-042a-41bc-b5c7-67601782b073",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "19f5fc58b027634ca56dfeb94fd941017e092ab1c076db5f52f33e74211e7eec"
+  },
+  "id": "oXE6SkppJzSTKkEC",
+  "tags": []
+}
